@@ -1,31 +1,33 @@
 <template>
   <div id="app">
-    <h1>Podcast List</h1>
+    <div class="container">
+      <h1>Podcast List</h1>
 
-    <p class="intro">
-      Using Firecrawl API and GPT technology,
-      this system automatically crawls specific levels of content from news websites,
-      summarizes the news into concise briefs, and generates 5-10 minute podcasts daily at
-      8 AM via a script powered by GitHub Actions. The resulting MP3 files are named based on
-      time and news content, then uploaded to a private Git repository. The front-end,
-      integrated with the GitHub API, provides a user-friendly interface to list and play podcasts,
-      making them easily accessible anytime.
-    </p>
+      <!-- 显示 Loading 状态 -->
+      <p v-if="isLoading" class="loading">Loading podcasts...</p>
 
-    <!-- 显示 Loading 状态 -->
-    <p v-if="isLoading" class="loading">Loading podcasts...</p>
+      <!-- 播放列表 -->
+      <ul v-else class="podcast-list">
+        <li v-for="(podcast, index) in podcasts" :key="index" class="podcast-item">
+          {{ podcast }}
+          <button class="play-button" @click="playPodcast(podcast)">Play</button>
+        </li>
+      </ul>
 
-    <!-- 播放列表 -->
-    <ul v-else class="podcast-list">
-      <li v-for="(podcast, index) in podcasts" :key="index" class="podcast-item">
-        {{ podcast }}
-        <button class="play-button" @click="playPodcast(podcast)">Play</button>
-      </li>
-    </ul>
+      <!-- 音频播放器 -->
+      <div class="audio-container">
+        <audio ref="audioPlayer" controls class="audio-player"></audio>
+      </div>
 
-    <!-- 音频播放器 -->
-    <div class="audio-container">
-      <audio ref="audioPlayer" controls class="audio-player"></audio>
+      <p class="intro">
+        Using Firecrawl API and GPT technology,
+        this system automatically crawls specific levels of content from news websites,
+        summarizes the news into concise briefs, and generates 5-10 minute podcasts daily at
+        8 AM via a script powered by GitHub Actions. The resulting MP3 files are named based on
+        time and news content, then uploaded to a private Git repository. The front-end,
+        integrated with the GitHub API, provides a user-friendly interface to list and play podcasts,
+        making them easily accessible anytime.
+      </p>
     </div>
   </div>
 </template>
@@ -44,7 +46,7 @@ export default {
   },
   methods: {
     async fetchPodcasts() {
-      this.isLoading = true; // 开始加载
+      this.isLoading = true; 
       try {
         const response = await fetch("https://getbloglist-a6lubplbza-uc.a.run.app");
         if (!response.ok) {
@@ -71,17 +73,27 @@ export default {
 <style>
 /* 全局样式 */
 body {
+  background-color: #ece9e9;
   font-family: Arial, sans-serif;
-  margin: 50px;
-  background-color: #f9f9f9;
-  color: #333;
 }
 
 /* 标题样式 */
 h1 {
   text-align: center;
   color: #555;
-  margin-top: 50px;
+  margin-top: 20px;
+}
+
+.audio-container {
+  width: 100%;
+}
+
+.container {
+  margin: 50px;
+  max-height: calc(100vh - 100px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* 介绍段落 */
@@ -91,7 +103,7 @@ h1 {
   font-size: 16px;
   line-height: 1.5;
   color: #666;
-  max-width: 600px;
+  max-width: 500px;
 }
 
 /* 加载状态 */
@@ -109,6 +121,7 @@ h1 {
   margin: 20px auto;
   padding-top: 20px;
   max-width: 600px;
+  width: 100%;
   max-height: 400px;
   overflow-y: auto;
 }
