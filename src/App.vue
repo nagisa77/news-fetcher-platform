@@ -20,13 +20,9 @@
       </div>
 
       <p class="intro">
-        Using Firecrawl API and GPT technology,
-        this system automatically crawls specific levels of content from news websites,
-        summarizes the news into concise briefs, and generates 5-10 minute podcasts daily at
-        8 AM via a script powered by GitHub Actions. The resulting MP3 files are named based on
-        time and news content, then uploaded to a private Git repository. The front-end,
-        integrated with the GitHub API, provides a user-friendly interface to list and play podcasts,
-        making them easily accessible anytime.
+        This system automates news summarization and podcast generation, 
+        delivering daily 20-40 minute episodes at 8 AM with seamless access 
+        via a user-friendly front-end.
       </p>
     </div>
   </div>
