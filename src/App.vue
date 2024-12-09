@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="container">
-      <h1>Podcast List</h1>
+      <img src="https://blog-1307107697.cos.ap-shanghai.myqcloud.com/title.png" alt="Podcast Title" class="title-image" />
 
       <!-- 显示 Loading 状态 -->
       <p v-if="isLoading" class="loading">Loading podcasts...</p>
@@ -98,6 +98,12 @@ h1 {
 
 .audio-container {
   width: 100%;
+}
+
+.title-image {
+  display: block;
+  margin: 20px auto;
+  max-width: 100%;
 }
 
 .container {
