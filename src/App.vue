@@ -8,9 +8,18 @@
 
       <!-- 播放列表 -->
       <ul v-else class="podcast-list">
-        <li v-for="(podcast, index) in podcasts" :key="index" class="podcast-item">
-          {{ podcast }}
-          <button class="play-button" @click="playPodcast(podcast)">Play</button>
+        <li
+          v-for="(podcast, index) in podcasts"
+          :key="index"
+          class="podcast-item"
+        >
+          <div>
+            <strong>{{ podcast.title }}</strong>
+            <p class="description">{{ podcast.description }}</p>
+          </div>
+          <button class="play-button" @click="playPodcast(podcast.filename)">
+            <i class="fa fa-play"></i>  
+          </button>
         </li>
       </ul>
 
@@ -20,9 +29,9 @@
       </div>
 
       <p class="intro">
-        This system automates news summarization and podcast generation, 
-        delivering daily 20-40 minute episodes at 8 AM with seamless access 
-        via a user-friendly front-end.
+        This system automates news summarization and podcast generation,
+        delivering daily 20-40 minute episodes at 8 AM with seamless access via
+        a user-friendly front-end.
       </p>
     </div>
   </div>
@@ -42,14 +51,16 @@ export default {
   },
   methods: {
     async fetchPodcasts() {
-      this.isLoading = true; 
+      this.isLoading = true;
       try {
-        const response = await fetch("https://getbloglist-a6lubplbza-uc.a.run.app");
+        const response = await fetch(
+          "https://getbloglist-a6lubplbza-uc.a.run.app"
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const fetchedPodcasts = await response.json();
-        // 按倒序排列列表
+        // 解析格式并按倒序排列
         this.podcasts = fetchedPodcasts.reverse();
       } catch (error) {
         console.error("Failed to fetch podcast list:", error);
@@ -133,14 +144,21 @@ h1 {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.description {
+  font-size: 14px;
+  color: #777;
+  margin: 4px 0;
+}
+
 /* 播放按钮 */
 .play-button {
-  padding: 8px 20px;
+  margin-left: 10px;
+  padding: 15px 18px;
+  border-radius: 50%;
   font-size: 14px;
   color: #fff;
   background-color: #4f4f4f;
   border: none;
-  border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
