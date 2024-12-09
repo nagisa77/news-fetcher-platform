@@ -14,7 +14,7 @@
           class="podcast-item"
         >
           <div>
-            <strong>{{ podcast.title }}</strong>
+            <strong>{{ podcast.displayName }}</strong>
             <p class="description">{{ podcast.description }}</p>
           </div>
           <button class="play-button" @click="playPodcast(podcast.filename)">
@@ -61,7 +61,12 @@ export default {
         }
         const fetchedPodcasts = await response.json();
         // 解析格式并按倒序排列
-        this.podcasts = fetchedPodcasts.reverse();
+        this.podcasts = fetchedPodcasts.reverse().map((podcast) => ({
+          title: podcast.title,
+          description: podcast.description,
+          filename: podcast.filename,
+          displayName: podcast.title.replace(/\.mp3$/i, ""), 
+        }));
       } catch (error) {
         console.error("Failed to fetch podcast list:", error);
       } finally {
