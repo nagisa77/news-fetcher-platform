@@ -13,11 +13,19 @@
           :key="index"
           class="podcast-item"
         >
+          <div class="image-container">
             <img :src="podcast.img_url" alt="Podcast Poster" class="podcast-image" />
-            <div class="podcast-title">
-              <strong>{{ podcast.displayName }}</strong>
-              <p class="description">{{ podcast.description }}</p>
+            <div class="overlay" @click="playPodcast(podcast.filename)">
+              <svg class="play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+                <circle cx="32" cy="32" r="32" fill="rgba(0, 0, 0, 0.5)" />
+                <polygon points="26,20 26,44 46,32" fill="#fff" />
+              </svg>
             </div>
+          </div>
+          <div class="podcast-title">
+            <strong>{{ podcast.displayName }}</strong>
+            <p class="description">{{ podcast.description }}</p>
+          </div>
         </li>
       </ul>
 
@@ -63,7 +71,7 @@ export default {
         this.podcasts = fetchedPodcasts.reverse().map((podcast) => ({
           title: podcast.title,
           img_url: podcast.img_url,
-          description: podcast.description.substring(0, 100) + '...', 
+          description: podcast.description,
           filename: podcast.filename,
           displayName: podcast.title.replace(/\.mp3$/i, ""), 
         }));
@@ -152,15 +160,54 @@ h1 {
   margin-bottom: 10px;
   border-radius: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative; /* 为定位遮罩和图标提供基础 */
 }
 
-.description {
-  font-size: 14px;
-  color: #777;
-  margin: 4px 0;
+/* 图片容器 */
+.image-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  flex-shrink: 0;
 }
 
-/* 播放按钮 */
+.podcast-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 16px 0px 0px 16px;
+  object-fit: cover;
+}
+
+/* 遮罩层 */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4); /* 半透明遮罩 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0; /* 初始隐藏 */
+  transition: opacity 0.3s ease;
+  border-radius: 16px 0px 0px 16px;
+  cursor: pointer;
+}
+
+/* 播放图标 */
+.play-icon {
+  width: 50px;
+  height: 50px;
+  fill: #fff;
+}
+
+/* 悬停时显示遮罩和图标 */
+.image-container:hover .overlay {
+  opacity: 1;
+}
+
+/* 播放按钮（如果有额外按钮的话，可以保留或删除） */
 .play-button {
   margin-left: 10px;
   padding: 15px 18px;
@@ -190,15 +237,49 @@ h1 {
   outline: none;
 }
 
-.podcast-image {
-  height: 200px;
-  width: 200px;
-  border-radius: 16px 0px 0px 16px;
-  margin-right: 20px;
-}
-
 .podcast-title {
+  margin-left: 20px;
   margin-right: 20px;
+  flex: 1; /* 使标题部分占据剩余空间 */
 }
 
+.description {
+  font-size: 14px;
+  color: #777;
+  margin: 4px 0;
+
+  /* 限制描述为最多三行 */
+  display: -webkit-box;
+  -webkit-line-clamp: 6; /* 限制为三行 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .podcast-image {
+    height: 100px;
+    width: 100px;
+  } 
+
+  .podcast-title {
+    margin-right: 10px;
+    font-size: 12px;
+  }
+
+  .description {
+    font-size: 10px;
+    -webkit-line-clamp: 3; /* 保持三行限制 */
+  }
+
+  .image-container {
+    width: 100px;
+    height: 100px;
+  }
+
+  .play-icon {
+    width: 30px;
+    height: 30px;
+  }
+}
 </style>
