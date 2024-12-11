@@ -13,7 +13,7 @@
           :key="index"
           class="podcast-item"
         >
-            <img :src="podcast.posterImage" alt="Podcast Poster" class="podcast-image" />
+            <img :src="podcast.img_url" alt="Podcast Poster" class="podcast-image" />
             <div class="podcast-title">
               <strong>{{ podcast.displayName }}</strong>
               <p class="description">{{ podcast.description }}</p>
@@ -52,7 +52,8 @@ export default {
       this.isLoading = true;
       try {
         const response = await fetch(
-          "https://getbloglist-a6lubplbza-uc.a.run.app"
+          // "https://getbloglist-a6lubplbza-uc.a.run.app"
+          "http://127.0.0.1:5001/news-fetcher-platform/us-central1/getBlogList"
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -61,7 +62,7 @@ export default {
         // 解析格式并按倒序排列
         this.podcasts = fetchedPodcasts.reverse().map((podcast) => ({
           title: podcast.title,
-          posterImage: podcast.posterImage,
+          img_url: podcast.img_url,
           description: podcast.description.substring(0, 100) + '...', 
           filename: podcast.filename,
           displayName: podcast.title.replace(/\.mp3$/i, ""), 
@@ -74,7 +75,8 @@ export default {
     },
     playPodcast(filename) {
       const audioPlayer = this.$refs.audioPlayer;
-      audioPlayer.src = `https://downloadfile-a6lubplbza-uc.a.run.app?filename=${filename}`;
+      // audioPlayer.src = `https://downloadfile-a6lubplbza-uc.a.run.app?filename=${filename}`;
+      audioPlayer.src = `http://127.0.0.1:5001/news-fetcher-platform/us-central1/downloadFile?filename=${filename}`;
       audioPlayer.play();
     },
   },
