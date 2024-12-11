@@ -13,13 +13,11 @@
           :key="index"
           class="podcast-item"
         >
-          <div>
-            <strong>{{ podcast.displayName }}</strong>
-            <p class="description">{{ podcast.description }}</p>
-          </div>
-          <button class="play-button" @click="playPodcast(podcast.filename)">
-            <i class="fa fa-play"></i>  
-          </button>
+            <img :src="podcast.posterImage" alt="Podcast Poster" class="podcast-image" />
+            <div class="podcast-title">
+              <strong>{{ podcast.displayName }}</strong>
+              <p class="description">{{ podcast.description }}</p>
+            </div>
         </li>
       </ul>
 
@@ -63,14 +61,15 @@ export default {
         // 解析格式并按倒序排列
         this.podcasts = fetchedPodcasts.reverse().map((podcast) => ({
           title: podcast.title,
-          description: podcast.description,
+          posterImage: podcast.posterImage,
+          description: podcast.description.substring(0, 100) + '...', 
           filename: podcast.filename,
           displayName: podcast.title.replace(/\.mp3$/i, ""), 
         }));
       } catch (error) {
         console.error("Failed to fetch podcast list:", error);
       } finally {
-        this.isLoading = false; // 加载结束
+        this.isLoading = false; 
       }
     },
     playPodcast(filename) {
@@ -121,7 +120,7 @@ h1 {
   font-size: 16px;
   line-height: 1.5;
   color: #666;
-  max-width: 500px;
+  max-width: 800px;
 }
 
 /* 加载状态 */
@@ -146,12 +145,10 @@ h1 {
 
 .podcast-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   background-color: #fff;
-  padding: 10px 20px;
   margin-bottom: 10px;
-  border-radius: 8px;
+  border-radius: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -178,7 +175,6 @@ h1 {
   background-color: #050506;
 }
 
-/* 音频播放器样式 */
 .audio-container {
   text-align: center;
   margin-top: 20px;
@@ -187,8 +183,20 @@ h1 {
 .audio-player {
   width: 100%;
   max-width: 600px;
-  border-radius: 8px;
+  border-radius: 16px;
   background-color: #f0f0f0;
   outline: none;
 }
+
+.podcast-image {
+  height: 200px;
+  width: 200px;
+  border-radius: 16px 0px 0px 16px;
+  margin-right: 20px;
+}
+
+.podcast-title {
+  margin-right: 20px;
+}
+
 </style>
