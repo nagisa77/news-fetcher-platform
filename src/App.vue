@@ -52,8 +52,8 @@ export default {
       this.isLoading = true;
       try {
         const response = await fetch(
-          // "https://getbloglist-a6lubplbza-uc.a.run.app"
-          "http://127.0.0.1:5001/news-fetcher-platform/us-central1/getBlogList"
+          "https://getbloglist-a6lubplbza-uc.a.run.app"
+          // "http://127.0.0.1:5001/news-fetcher-platform/us-central1/getBlogList"
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -75,8 +75,8 @@ export default {
     },
     playPodcast(filename) {
       const audioPlayer = this.$refs.audioPlayer;
-      // audioPlayer.src = `https://downloadfile-a6lubplbza-uc.a.run.app?filename=${filename}`;
-      audioPlayer.src = `http://127.0.0.1:5001/news-fetcher-platform/us-central1/downloadFile?filename=${filename}`;
+      audioPlayer.src = `https://downloadfile-a6lubplbza-uc.a.run.app?filename=${filename}`;
+      // audioPlayer.src = `http://127.0.0.1:5001/news-fetcher-platform/us-central1/downloadFile?filename=${filename}`;
       audioPlayer.play();
     },
   },
