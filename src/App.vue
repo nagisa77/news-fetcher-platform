@@ -22,7 +22,7 @@
             </div>
           </div>
           <div class="podcast-title">
-            <strong>{{ podcast.displayName }}</strong>
+            <strong class="title">{{ podcast.displayName }}</strong>
             <p class="description">{{ podcast.description }}</p>
           </div>
         </li>
@@ -287,6 +287,15 @@ h1 {
   .play-icon {
     width: 30px;
     height: 30px;
+  }
+
+  /* 限制标题最多显示两行 */
+  .podcast-title .title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* 显示的行数 */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 </style>
