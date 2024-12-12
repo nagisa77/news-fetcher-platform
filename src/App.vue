@@ -1,8 +1,7 @@
 <template>
   <div id="app">
     <div class="container">
-      <img src="https://blog-1307107697.cos.ap-shanghai.myqcloud.com/title.png" alt="Podcast Title" class="title-image" />
-
+      <h1 class="title-text">News Fetcher Platform</h1>
       <!-- 显示 Loading 状态 -->
       <p v-if="isLoading" class="loading">Loading podcasts...</p>
 
@@ -109,6 +108,15 @@ h1 {
   width: 100%;
 }
 
+.title-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 48px;
+  font-weight: 700;
+  color: #333;
+  text-align: center;
+  margin-top: 20px;
+}
+
 .title-image {
   display: block;
   margin: 20px auto;
@@ -146,7 +154,6 @@ h1 {
   list-style: none;
   padding: 0;
   margin: 20px auto;
-  padding-top: 20px;
   max-width: 600px;
   width: 100%;
   max-height: 400px;
