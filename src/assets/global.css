@@ -1,0 +1,16 @@
+:root {
+  --color-deep-level-1-rose-taupe: #7C606B;
+  --color-deep-level-2-rose-taupe: #C46BAE;
+  --color-deep-level-3-sky-magenta: #EB7BC0;
+  --color-deep-level-4-persian-pink: #EDA4BD;
+  --color-deep-level-5-amaranth-pink: #EED5C2;
+  --color-deep-level-6-champagne-pink: #FADADD;
+  --color-white: #FFFFFF;
+}
+
+html, body {
+  font-family: 'Roboto', sans-serif;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
