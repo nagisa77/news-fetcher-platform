@@ -138,7 +138,6 @@ export default {
   }
 }
 
-
 @media (max-width: 649px) {
   .site-header-mobile {
     display: flex;

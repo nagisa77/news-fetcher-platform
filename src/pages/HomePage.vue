@@ -10,7 +10,8 @@
           </div>
           <!-- 文章内容 -->
           <div v-else class="masonry">
-            <div v-for="(podcast, index) in podcasts" :key="index" class="masonry-item" @click="$emit('play-request', podcast.filename)">
+            <div v-for="(podcast, index) in podcasts" :key="index" class="masonry-item"
+              @click="$emit('play-request', podcast.filename)">
               <div class="image-container">
                 <img v-if="podcast.img_url && podcast.img_url.trim() !== ''" :src="podcast.img_url"
                   :alt="'Placeholder Image ' + index" class="responsive-image" />
@@ -22,7 +23,12 @@
                 </div>
               </div>
               <div class="content-card-text-container">
-                <p class="content-card-text">{{ podcast.title || '未命名文章' }}</p>
+                <div>
+                  <p class="content-card-text">{{ podcast.title || '未命名文章' }}</p>
+                  <div class="tags-container">
+                    <span v-for="tag in podcast.tags" :key="tag" class="content-card-tag">{{ '#' + tag }}</span>
+                  </div>
+                </div>
                 <span class="content-card-date">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12">
                     <path
@@ -70,12 +76,15 @@ export default {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const fetchedPodcasts = await response.json();
+        console.log(fetchedPodcasts);
         // 解析格式并按倒序排列
         this.podcasts = fetchedPodcasts.reverse().map((podcast) => ({
           title: podcast.title,
           img_url: podcast.img_url,
           description: podcast.description,
           filename: podcast.filename,
+          date: podcast.date,
+          tags: podcast.tags,
           displayName: podcast.title.replace(/\.mp3$/i, ""),
         }));
       } catch (error) {
@@ -120,7 +129,7 @@ export default {
 
 .masonry-item {
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   margin-bottom: 20px;
   break-inside: avoid;
   background-color: var(--color-white);
@@ -198,6 +207,8 @@ export default {
   color: var(--content-card-text-color);
   font-weight: bold;
   font-size: 13px;
+  display: flex;
+  align-items: center;
 }
 
 .content-card-date {
@@ -205,6 +216,18 @@ export default {
   align-items: center;
   gap: 10px;
   font-size: 10px;
+  margin-top: 10px;
+}
+
+.tags-container {
+  font-size: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  opacity: 0.8;
+}
+
+.content-card-tag {
+  margin-right: 5px;
 }
 
 /* 响应式布局 */
@@ -240,14 +263,14 @@ export default {
     border-radius: 14px;
   }
 
-  .podcast-title {
-    margin-right: 10px;
-    font-size: 12px;
+  .content-card-text {
+    font-size: 11px;
   }
 
   .description {
     font-size: 10px;
-    -webkit-line-clamp: 3; /* 保持三行限制 */
+    -webkit-line-clamp: 3;
+    /* 保持三行限制 */
   }
 
   .image-container {
@@ -264,6 +287,11 @@ export default {
 
   .content-card-text-container {
     width: 70%;
+    padding: 8px;
+  }
+
+  .content-card-description {
+    font-size: 9px;
   }
 
   .play-icon {
@@ -271,10 +299,9 @@ export default {
     height: 30px;
   }
 
-  /* 限制标题最多显示两行 */
-  .podcast-title .title {
+  .content-card-text {
     display: -webkit-box;
-    -webkit-line-clamp: 2; /* 显示的行数 */
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
