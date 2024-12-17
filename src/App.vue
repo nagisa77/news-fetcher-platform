@@ -1,7 +1,7 @@
 <template>
   <div class="site-container">
     <header class="site-header-desktop">
-      <HeaderContent :showTitle="true" @route-clicked="handleRouteClicked" ref="headerContent"/>
+      <HeaderContent ref="header-content-desktop" :showTitle="true" @route-clicked="handleRouteClicked"/>
     </header>
 
     <header class="site-header-mobile">
@@ -14,7 +14,7 @@
     </header>
 
     <div class="header-content-mobile" :class="{ 'menu-visible': isMobileMenuOpen }">
-      <HeaderContent :showTitle="false" @route-clicked="handleRouteClicked" ref="headerContent" />
+      <HeaderContent ref="header-content-mobile" :showTitle="false" @route-clicked="handleRouteClicked" />
     </div>
 
     <div class="site-content">
@@ -32,8 +32,15 @@ export default {
   },
   data() {
     return {
-      isMobileMenuOpen: false,  // 新增的定义
+      isMobileMenuOpen: false,
+      isMobile: window.innerWidth < 650, // 新增
     };
+  },
+  mounted() { // 新增
+    window.addEventListener('resize', this.handleResize);
+  },
+  beforeUnmount() { // 新增: Vue 3 使用 beforeUnmount
+    window.removeEventListener('resize', this.handleResize);
   },
   methods: {
     handleRouteClicked(routeName) {
@@ -46,10 +53,33 @@ export default {
       this.isMobileMenuOpen = !this.isMobileMenuOpen;
     },
     playPodcast(filename) {
-      // 使用父组件的引用找到 HeaderContent 内的 audioPlayer
-      const audioPlayer = this.$refs.headerContent.$refs.audioPlayer;
-      audioPlayer.src = `https://downloadfile-a6lubplbza-uc.a.run.app?filename=${filename}`;
-      audioPlayer.play();
+      if (this.isMobile) {  
+        const audioPlayer = this.$refs['header-content-mobile'].$refs.audioPlayer;
+        audioPlayer.src = `https://downloadfile-a6lubplbza-uc.a.run.app?filename=${filename}`;
+        audioPlayer.play();
+      } else {
+        const audioPlayer = this.$refs['header-content-desktop'].$refs.audioPlayer;
+        audioPlayer.src = `https://downloadfile-a6lubplbza-uc.a.run.app?filename=${filename}`;
+        audioPlayer.play();
+      }
+    },
+    handleResize() { 
+      const wasMobile = this.isMobile;
+      this.isMobile = window.innerWidth < 650;
+      if (wasMobile !== this.isMobile) {
+        this.onViewChange(this.isMobile ? 'mobile' : 'desktop');
+      }
+    },
+    onViewChange(view) { 
+      console.log(`视图切换到: ${view}`);
+      
+      if (this.isMobile) {  
+        const audioPlayer = this.$refs['header-content-desktop'].$refs.audioPlayer;
+        audioPlayer.pause();
+      } else {
+        const audioPlayer = this.$refs['header-content-mobile'].$refs.audioPlayer;
+        audioPlayer.pause();
+      }
     },
   }
 }
