@@ -1,6 +1,6 @@
 <template>
   <div class="site-container">
-    <div class="overlay"></div> <!-- 添加全局粉红色透明度为0.2的蒙层 -->
+    <div class="overlay"></div> 
     <header class="site-header-desktop">
       <HeaderContent ref="header-content-desktop" :showTitle="true" @route-clicked="handleRouteClicked"/>
     </header>
