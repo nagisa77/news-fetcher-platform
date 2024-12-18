@@ -112,7 +112,7 @@ export default {
 
 .site-content {
   height: 100vh;
-  width: calc(100% - 300px);
+  width: calc(100vw - 300px);
   background-color: var(--content-background-color);
   transition: margin-left 0.3s ease;
 }
