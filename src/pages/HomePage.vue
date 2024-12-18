@@ -30,9 +30,8 @@
                   </div>
                 </div>
                 <span class="content-card-date">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12">
-                    <path
-                      d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zm-7-9h5v5h-5V10z" />
+                  <svg class="content-card-date-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12">
+                    <path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zm-7-9h5v5h-5V10z" />
                   </svg>
                   {{ podcast.date || '未知日期' }}
                 </span>
@@ -153,11 +152,16 @@ export default {
   margin: 0 auto;
 }
 
+.content-card-date-icon {
+  color: var(--color-deep-level-2-rose-taupe);
+}
+
 .loading-icon {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  color: var(--color-deep-level-2-rose-taupe);
 }
 
 .image-container {
@@ -231,6 +235,12 @@ export default {
 }
 
 /* 响应式布局 */
+@media (prefers-color-scheme: dark) {
+  .masonry-item {
+    border: 1px solid var(--color-deep-level-2-rose-taupe);
+  }
+}
+
 @media (min-width: 900px) {
   .masonry {
     column-count: 3;

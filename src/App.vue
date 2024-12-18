@@ -1,5 +1,6 @@
 <template>
   <div class="site-container">
+    <div class="overlay"></div> <!-- 添加全局粉红色透明度为0.2的蒙层 -->
     <header class="site-header-desktop">
       <HeaderContent ref="header-content-desktop" :showTitle="true" @route-clicked="handleRouteClicked"/>
     </header>
@@ -8,7 +9,7 @@
       <h1 class="mobile-header-title">Podcasts</h1>
       <button @click="toggleMobileMenu" style="background: none; border: none; padding: 0; cursor: pointer;">
         <svg class="mobile-header-menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-          <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" />
+          <path fill="currentColor" d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" />
         </svg>
       </button>
     </header>
@@ -90,6 +91,18 @@ export default {
   display: flex;
   height: 100%;
   width: 100%;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-deep-level-3-sky-magenta); 
+  z-index: 10000000; 
+  opacity: 0.15;
+  pointer-events: none; 
 }
 
 .header-menu-icon {
