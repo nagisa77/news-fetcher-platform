@@ -11,10 +11,6 @@
                 </router-link>
             </li>
         </div>
-
-        <div class="audio-container">
-            <audio ref="audioPlayer" controls class="audio-player"></audio>
-        </div>
     </div>
 </template>
 
@@ -68,11 +64,6 @@ export default {
 .header-route-item a:hover {
     text-decoration: underline;
     color: var(--color-deep-level-2-rose-taupe);
-}
-
-.audio-container {  
-    margin-top: 50px;
-    width: 100%;
 }
 
 .header-description {

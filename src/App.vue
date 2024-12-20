@@ -21,6 +21,10 @@
     <div class="site-content">
       <router-view @play-request="playPodcast" />
     </div>
+
+    <div class="bottom-audio-container">
+      <audio ref="audioPlayer" controls class="audio-player"></audio>
+    </div>
   </div>
 </template>
 
@@ -34,14 +38,7 @@ export default {
   data() {
     return {
       isMobileMenuOpen: false,
-      isMobile: window.innerWidth < 650, // 新增
     };
-  },
-  mounted() { // 新增
-    window.addEventListener('resize', this.handleResize);
-  },
-  beforeUnmount() { // 新增: Vue 3 使用 beforeUnmount
-    window.removeEventListener('resize', this.handleResize);
   },
   methods: {
     handleRouteClicked(routeName) {
@@ -54,32 +51,12 @@ export default {
       this.isMobileMenuOpen = !this.isMobileMenuOpen;
     },
     playPodcast(filename) {
-      if (this.isMobile) {  
-        const audioPlayer = this.$refs['header-content-mobile'].$refs.audioPlayer;
+      const audioPlayer = this.$refs.audioPlayer;
+      if (audioPlayer) {
         audioPlayer.src = `https://downloadfile-a6lubplbza-uc.a.run.app?filename=${filename}`;
         audioPlayer.play();
       } else {
-        const audioPlayer = this.$refs['header-content-desktop'].$refs.audioPlayer;
-        audioPlayer.src = `https://downloadfile-a6lubplbza-uc.a.run.app?filename=${filename}`;
-        audioPlayer.play();
-      }
-    },
-    handleResize() { 
-      const wasMobile = this.isMobile;
-      this.isMobile = window.innerWidth < 650;
-      if (wasMobile !== this.isMobile) {
-        this.onViewChange(this.isMobile ? 'mobile' : 'desktop');
-      }
-    },
-    onViewChange(view) { 
-      console.log(`视图切换到: ${view}`);
-      
-      if (this.isMobile) {  
-        const audioPlayer = this.$refs['header-content-desktop'].$refs.audioPlayer;
-        audioPlayer.pause();
-      } else {
-        const audioPlayer = this.$refs['header-content-mobile'].$refs.audioPlayer;
-        audioPlayer.pause();
+        console.error('音频播放器未找到');
       }
     },
   }
@@ -167,6 +144,20 @@ export default {
 .mobile-header-menu-icon {
   margin-right: 20px;
   color: var(--color-deep-level-1-rose-taupe);
+}
+
+.bottom-audio-container {
+    position: fixed;            
+    bottom: 0;
+    left: 50%;                  
+    transform: translate(-50%, -50%); 
+    padding: 0px;                
+    z-index: 1000;              
+    width: 80%;                 
+    display: flex;              
+    align-items: center;        
+    justify-content: center;    
+    border-radius: 8px;         
 }
 
 @media (min-width: 650px) and (max-width: 1099px) {
