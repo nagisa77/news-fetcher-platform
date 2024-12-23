@@ -5,7 +5,6 @@
         <div class="content-container">
           <!-- 加载中提示 -->
           <div v-if="loading" class="loading-icon">
-            <!-- <l-tail-chase size="40" speed="1.75" color="black"></l-tail-chase> -->
             Loading...
           </div>
           <!-- 文章内容 -->
@@ -15,6 +14,10 @@
               <div class="image-container">
                 <img v-if="podcast.img_url && podcast.img_url.trim() !== ''" :src="podcast.img_url"
                   :alt="'Placeholder Image ' + index" class="responsive-image" />
+                <!-- 显示总时长 -->
+                <div class="duration-overlay">
+                  {{ formatDuration(podcast.total_duration) }}
+                </div>
                 <div class="overlay">
                   <svg class="play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
                     <circle cx="32" cy="32" r="32" fill="rgba(0, 0, 0, 0.5)" />
@@ -45,10 +48,6 @@
 </template>
 
 <script>
-// import { tailChase } from 'ldrs'
-
-// tailChase.register()
-
 export default {
   name: 'HomePage',
 
@@ -69,7 +68,6 @@ export default {
       try {
         const response = await fetch(
           "https://getbloglist-a6lubplbza-uc.a.run.app"
-          // "http://127.0.0.1:5001/news-fetcher-platform/us-central1/getBlogList"
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -84,6 +82,7 @@ export default {
           filename: podcast.filename,
           date: podcast.date,
           tags: podcast.tags,
+          total_duration: podcast.total_duration, // 确保包含 total_duration
           displayName: podcast.title.replace(/\.mp3$/i, ""),
         }));
       } catch (error) {
@@ -91,6 +90,16 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+    /**
+     * 将秒数转换为 mm:ss 格式
+     * @param {number} seconds
+     * @returns {string}
+     */
+    formatDuration(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     },
   }
 }
@@ -232,6 +241,27 @@ export default {
 
 .content-card-tag {
   margin-right: 5px;
+}
+
+/* 添加总时长的样式 */
+.duration-overlay {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* 确保 .image-container 是相对定位，以便子元素绝对定位 */
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  flex-shrink: 0;
 }
 
 /* 响应式布局 */
