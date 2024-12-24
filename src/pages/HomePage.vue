@@ -9,19 +9,34 @@
           </div>
           <!-- 文章内容 -->
           <div v-else class="masonry">
-            <div v-for="(podcast, index) in podcasts" :key="index" class="masonry-item"
-              @click="$emit('play-request', podcast)">
+            <div
+              v-for="(podcast, index) in podcasts"
+              :key="index"
+              class="masonry-item"
+              @click="$emit('play-request', podcast)"
+            >
+              <!-- 利用 aspect-ratio 避免图片没加载前容器塌陷 -->
               <div class="image-container">
-                <img v-if="podcast.img_url && podcast.img_url.trim() !== ''" :src="podcast.img_url"
-                  :alt="'Placeholder Image ' + index" class="responsive-image" />
+                <img
+                  v-if="podcast.img_url && podcast.img_url.trim() !== ''"
+                  :src="podcast.img_url"
+                  :alt="'Placeholder Image ' + index"
+                  class="responsive-image"
+                  :class="{'fade-in': imageLoadedMap[index]}"
+                  @load="onImageLoad(index)"
+                />
                 <!-- 显示总时长 -->
                 <div class="duration-overlay">
                   {{ formatDuration(podcast.total_duration) }}
                 </div>
-                <div v-if="
-                  audioManager.state.isPlaying &&
-                  podcast.title === audioManager.state.currentPodcastTitle
-                " class="overlay">
+                <div
+                  v-if="
+                    audioManager.state.isPlaying &&
+                    podcast.title === audioManager.state.currentPodcastTitle
+                  "
+                  class="overlay"
+                >
+                  <!-- 暂停图标 -->
                   <svg class="play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
                     <circle cx="32" cy="32" r="32" fill="rgba(0, 0, 0, 0.5)" />
                     <rect x="22" y="20" width="8" height="24" fill="#fff" />
@@ -29,6 +44,7 @@
                   </svg>
                 </div>
                 <div v-else class="overlay">
+                  <!-- 播放图标 -->
                   <svg class="play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
                     <circle cx="32" cy="32" r="32" fill="rgba(0, 0, 0, 0.5)" />
                     <polygon points="26,20 26,44 46,32" fill="#fff" />
@@ -39,14 +55,27 @@
                 <div>
                   <p class="content-card-text">{{ podcast.title || '未命名文章' }}</p>
                   <div class="tags-container">
-                    <span v-for="tag in podcast.tags" :key="tag" class="content-card-tag">{{ '#' + tag }}</span>
+                    <span
+                      v-for="tag in podcast.tags"
+                      :key="tag"
+                      class="content-card-tag"
+                    >
+                      {{ '#' + tag }}
+                    </span>
                   </div>
                 </div>
                 <span class="content-card-date">
-                  <svg class="content-card-date-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12"
-                    height="12">
-                    <path fill="currentColor"
-                      d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zm-7-9h5v5h-5V10z" />
+                  <svg
+                    class="content-card-date-icon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    width="12"
+                    height="12"
+                  >
+                    <path
+                      fill="currentColor"
+                      d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zm-7-9h5v5h-5V10z"
+                    />
                   </svg>
                   {{ podcast.date || '未知日期' }}
                 </span>
@@ -69,7 +98,9 @@ export default {
     return {
       podcasts: [],
       loading: true,
-      audioManager, // <--- 1) 将 audioManager 直接挂到 data 上
+      audioManager, // 保持 audioManager
+      // 新增：用于记录每张图片是否加载完成
+      imageLoadedMap: {},
     };
   },
 
@@ -113,6 +144,12 @@ export default {
       const mins = Math.floor(seconds / 60);
       const secs = seconds % 60;
       return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    },
+    /**
+     * 当图片加载完成时，设置对应标记，触发淡入
+     */
+     onImageLoad(index) {
+      this.imageLoadedMap[index] = true;
     },
   },
 };
@@ -186,21 +223,36 @@ export default {
   color: var(--color-deep-level-2-rose-taupe);
 }
 
+/* 
+  1) 为了防止容器在图片未加载前塌陷，使用 aspect-ratio
+     如果要兼容老浏览器，可用 padding 技巧替换 
+*/
 .image-container {
   position: relative;
   width: 100%;
-  height: 100%;
+  aspect-ratio: 1; /* 你可以改成 1 / 1, 4 / 3, etc. */
+  overflow: hidden;
+  border-radius: 20px 20px 0 0;
   flex-shrink: 0;
 }
 
+/* 2) 图片本身绝对定位全覆盖，并设置淡入动画 */
 .responsive-image {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  display: block;
-  border-radius: 20px 20px 0 0;
   object-fit: cover;
+  border-radius: 20px 20px 0 0;
+  opacity: 0;               /* 初始透明 */
+  transition: opacity 0.5s; /* 淡入时长 0.5s */
 }
 
+/* 加载完成后，通过 .fade-in 切换到不透明 */
+.fade-in {
+  opacity: 1;
+}
 
 /* 遮罩层 */
 .overlay {
@@ -229,7 +281,7 @@ export default {
 }
 
 .content-card-text {
-  margin-top: 0px;
+  margin-top: 0;
   color: var(--content-card-text-color);
   font-weight: bold;
   font-size: 13px;
@@ -269,15 +321,7 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* 确保 .image-container 是相对定位，以便子元素绝对定位 */
-.image-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  flex-shrink: 0;
-}
-
-/* 响应式布局 */
+/* 响应式布局：根据视口大小改变列数 */
 @media (prefers-color-scheme: dark) {
   .masonry-item {
     border: 1px solid var(--color-deep-level-2-rose-taupe);
@@ -323,11 +367,12 @@ export default {
   .description {
     font-size: 10px;
     -webkit-line-clamp: 3;
-    /* 保持三行限制 */
   }
 
   .image-container {
     width: 30%;
+    aspect-ratio: unset; /* 若想在小屏改成自适应，可在此禁用固定比 */
+    border-radius: 14px 0 0 14px;
   }
 
   .responsive-image {
