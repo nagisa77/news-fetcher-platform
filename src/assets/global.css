@@ -6,6 +6,8 @@
   --color-deep-level-5-amaranth-pink: #EED5C2;
   --color-deep-level-6-champagne-pink: #FADADD;
   --color-white: #FFFFFF;
+
+  --bottom-audio-opacity: 0.8;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,6 +19,8 @@
     --color-deep-level-5-amaranth-pink: #EED5C2;
     --color-deep-level-6-champagne-pink: #7C606B;
     --color-white: #2c2125;
+
+    --bottom-audio-opacity: 0.3; 
   }
 }
 

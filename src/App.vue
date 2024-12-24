@@ -22,18 +22,18 @@
       <router-view @play-request="playPodcast" />
     </div>
 
-    <div class="bottom-audio-container">
-      <audio ref="audioPlayer" controls class="audio-player"></audio>
-    </div>
+    <!-- <audio ref="audioPlayer" controls class="audio-player"></audio> -->
+    <MobilePlayer />
   </div>
 </template>
 
 <script>
 import HeaderContent from './components/HeaderContent.vue';
-
+import MobilePlayer from './components/MobilePlayer.vue';
 export default {
   components: {
-    HeaderContent
+    HeaderContent,
+    MobilePlayer
   },
   data() {
     return {
@@ -144,20 +144,6 @@ export default {
 .mobile-header-menu-icon {
   margin-right: 20px;
   color: var(--color-deep-level-1-rose-taupe);
-}
-
-.bottom-audio-container {
-    position: fixed;            
-    bottom: 0;
-    left: 50%;                  
-    transform: translate(-50%, -50%); 
-    padding: 0px;                
-    z-index: 1000;              
-    width: 80%;                 
-    display: flex;              
-    align-items: center;        
-    justify-content: center;    
-    border-radius: 8px;         
 }
 
 @media (min-width: 650px) and (max-width: 1099px) {
