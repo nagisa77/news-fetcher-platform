@@ -12,7 +12,14 @@
                 <img :src="coverSrc" alt="Podcast Poster" />
             </div>
             <div class="mobile-player-title-container">
-                <div class="mobile-player-title">{{ podcastTitle }}</div>
+                <!-- 当标题过长时添加 marquee 类，滚动显示 -->
+                <div
+                    class="mobile-player-title"
+                    :class="{ marquee: isTitleOverflow }"
+                    ref="titleRef"
+                >
+                    {{ podcastTitle }}
+                </div>
                 <div class="mobile-player-subtitle">{{ podcastSubtitle }}</div>
             </div>
         </div>
@@ -73,7 +80,8 @@ export default {
             isPlaying: false,
             audio: null,
             duration: 0,
-            currentTime: 0
+            currentTime: 0,
+            isTitleOverflow: false // 新增：用于控制标题是否滚动
         };
     },
     computed: {
@@ -102,11 +110,22 @@ export default {
                     this.isPlaying = true;
                 }
             }
+        },
+        // 当 podcastTitle 变化时，重新检测
+        podcastTitle() {
+            this.$nextTick(() => {
+                this.checkTitleOverflow();
+            });
         }
     },
     mounted() {
         // 如果一开始就有 audioSrc，可在这里也调用 initAudio(this.audioSrc)
         // 但因为设置了 watch immediate:true，所以已包含初始化逻辑
+
+        // 检测标题是否超出容器
+        this.$nextTick(() => {
+            this.checkTitleOverflow();
+        });
     },
     beforeUnmount() {
         if (this.audio) {
@@ -127,7 +146,7 @@ export default {
                 this.audio.pause();
                 this.audio = null;
             }
-            if (!src) return; // 如果没有音频源，就不做初始化了
+            if (!src) return; // 如果没有音频源，就不做初始化
 
             this.audio = new Audio(src);
             // 监听事件
@@ -166,6 +185,17 @@ export default {
         handleEnded() {
             this.isPlaying = false;
             this.currentTime = 0;
+        },
+        /**
+         * 检测标题是否溢出容器，从而决定是否开启滚动
+         */
+        checkTitleOverflow() {
+            const titleEl = this.$refs.titleRef;
+            const containerEl = this.$el.querySelector('.mobile-player-title-container');
+            if (!titleEl || !containerEl) return;
+
+            // 如果标题的实际滚动宽度 > 容器的宽度，则认为超出，需要滚动显示
+            this.isTitleOverflow = titleEl.scrollWidth > containerEl.clientWidth;
         }
     }
 };
@@ -207,10 +237,7 @@ export default {
     position: absolute;
     bottom: 0;
     left: 30px;
-    right: 30px;
     height: 2px;
-    /* 原先固定 50%，现改为动态计算 */
-    width: 0%;
     background-color: var(--color-deep-level-3-sky-magenta);
     z-index: 2;
     transition: width 0.2s linear;
@@ -242,7 +269,6 @@ export default {
     0% {
         transform: rotate(0deg);
     }
-
     100% {
         transform: rotate(360deg);
     }
@@ -255,21 +281,50 @@ export default {
     z-index: 1;
 }
 
+/* 
+  1. 限制标题容器最大宽度，超出隐藏
+  2. 单行显示（white-space: nowrap）
+*/
 .mobile-player-title-container {
+    max-width: 170px; /* 这里可根据需求自行调整 */
+    overflow: hidden;
+    white-space: nowrap;
     margin-left: 10px;
 }
 
 .mobile-player-title {
+    display: inline-block;
     font-size: 12px;
     font-weight: bold;
     color: var(--color-deep-level-4-persian-pink);
+    /* 默认不滚动，只有当添加 marquee 类时才滚动 */
 }
 
+/* 副标题 */
 .mobile-player-subtitle {
     font-size: 10px;
     padding-top: 4px;
     opacity: 0.8;
     color: var(--color-deep-level-4-persian-pink);
+}
+/* marquee 动画：来回滑动 */
+.marquee {
+    /* 根据需求可调整体时长、动画曲线等 */
+    animation: marquee 5s linear infinite;
+}
+
+/* 往返（Ping-Pong）动画：
+   0%：回到初始位置
+   50%：移动到 -50%
+   100%：回到初始位置
+ */
+@keyframes marquee {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(-50%);
+    }
 }
 
 /* 播放 / 暂停图标样式 */
