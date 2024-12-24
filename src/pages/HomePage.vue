@@ -10,7 +10,7 @@
           <!-- 文章内容 -->
           <div v-else class="masonry">
             <div v-for="(podcast, index) in podcasts" :key="index" class="masonry-item"
-              @click="$emit('play-request', podcast.filename)">
+              @click="$emit('play-request', podcast)">
               <div class="image-container">
                 <img v-if="podcast.img_url && podcast.img_url.trim() !== ''" :src="podcast.img_url"
                   :alt="'Placeholder Image ' + index" class="responsive-image" />
