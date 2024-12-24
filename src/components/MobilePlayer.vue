@@ -20,7 +20,7 @@
                 >
                     {{ podcastTitle }}
                 </div>
-                <div class="mobile-player-subtitle">{{ podcastSubtitle }}</div>
+                <div class="mobile-player-subtitle" ref="subtitleRef" :class="{ marquee: isSubtitleOverflow }">{{ podcastSubtitle }}</div>
             </div>
         </div>
 
@@ -43,161 +43,191 @@
 </template>
 
 <script>
+import { computed, watch, onBeforeUnmount, ref, onMounted } from 'vue';
+import audioManager from '@/globalAudioManager.js';
+import { nextTick } from 'vue';
+
 export default {
-    name: 'MobilePlayer',
-    props: {
-        /**
-         * 音频源地址，可根据业务场景动态传入
-         */
-        audioSrc: {
-            type: String,
-            default: ''
-        },
-        /**
-         * Podcast 封面图片链接
-         */
-        coverSrc: {
-            type: String,
-            default: 'https://storage.googleapis.com/news-fetcher-platform.firebasestorage.app/podcasts_image/今日新闻热点_cover.png'
-        },
-        /**
-         * Podcast 标题
-         */
-        podcastTitle: {
-            type: String,
-            default: '今日新闻热点'
-        },
-        /**
-         * Podcast 副标题
-         */
-        podcastSubtitle: {
-            type: String,
-            default: '今日新闻热点'
-        },
-    },
-    data() {
-        return {
-            isPlaying: false,
-            audio: null,
-            duration: 0,
-            currentTime: 0,
-            isTitleOverflow: false // 新增：用于控制标题是否滚动
-        };
-    },
-    computed: {
-        /**
-         * 动态设置进度条宽度
-         */
-        progressBarWidth() {
-            if (!this.duration) return '0%';
-            return `${(this.currentTime / this.duration) * 100}%`;
-        },
-        /**
-         * 播放时给封面添加旋转动画
-         */
-        rotatingPosterClass() {
-            return this.isPlaying ? 'poster-rotating' : '';
-        }
-    },
-    watch: {
-        audioSrc: {
-            immediate: true,
-            handler(newSrc) {
-                this.initAudio(newSrc);
-                // 如果存在新的音频地址，则自动播放
-                if (newSrc) {
-                    this.audio.play();
-                    this.isPlaying = true;
-                }
-            }
-        },
-        // 当 podcastTitle 变化时，重新检测
-        podcastTitle() {
-            this.$nextTick(() => {
-                this.checkTitleOverflow();
-            });
-        }
-    },
-    mounted() {
-        // 如果一开始就有 audioSrc，可在这里也调用 initAudio(this.audioSrc)
-        // 但因为设置了 watch immediate:true，所以已包含初始化逻辑
+  name: 'MobilePlayer',
 
-        // 检测标题是否超出容器
-        this.$nextTick(() => {
-            this.checkTitleOverflow();
-        });
-    },
-    beforeUnmount() {
-        if (this.audio) {
-            this.audio.removeEventListener('timeupdate', this.handleTimeUpdate);
-            this.audio.removeEventListener('ended', this.handleEnded);
-            this.audio.removeEventListener('canplay', this.handleCanPlay);
-            this.audio.pause();
-            this.audio = null;
-        }
-    },
-    methods: {
-        /**
-         * 初始化音频事件监听
-         */
-        initAudio(src) {
-            // 先清理旧 audio
-            if (this.audio) {
-                this.audio.pause();
-                this.audio = null;
-            }
-            if (!src) return; // 如果没有音频源，就不做初始化
+  setup() {
+    // 全局状态对象
+    const state = audioManager.state;
 
-            this.audio = new Audio(src);
-            // 监听事件
-            this.audio.addEventListener('timeupdate', this.handleTimeUpdate);
-            this.audio.addEventListener('ended', this.handleEnded);
-            this.audio.addEventListener('canplay', this.handleCanPlay);
-        },
-        /**
-         * 播放 / 暂停 按钮事件
-         */
-        togglePlayPause() {
-            if (!this.audio) return;
-            if (!this.isPlaying) {
-                this.audio.play();
-                this.isPlaying = true;
-            } else {
-                this.audio.pause();
-                this.isPlaying = false;
-            }
-        },
-        /**
-         * 当音频可播放时，获取总时长
-         */
-        handleCanPlay() {
-            this.duration = this.audio.duration;
-        },
-        /**
-         * 实时更新 currentTime，用来设置进度条
-         */
-        handleTimeUpdate() {
-            this.currentTime = this.audio.currentTime;
-        },
-        /**
-         * 当音频播放结束
-         */
-        handleEnded() {
-            this.isPlaying = false;
-            this.currentTime = 0;
-        },
-        /**
-         * 检测标题是否溢出容器，从而决定是否开启滚动
-         */
-        checkTitleOverflow() {
-            const titleEl = this.$refs.titleRef;
-            const containerEl = this.$el.querySelector('.mobile-player-title-container');
-            if (!titleEl || !containerEl) return;
+    // 这里引用原生 Audio 实例
+    const audio = ref(null);
 
-            // 如果标题的实际滚动宽度 > 容器的宽度，则认为超出，需要滚动显示
-            this.isTitleOverflow = titleEl.scrollWidth > containerEl.clientWidth;
+    // 1) 定义几个 computed，用来在模板中使用
+    //    只要 globalAudioManager 里发生变动，这些值就会自动更新
+    const isPlaying = computed(() => state.isPlaying);
+    const podcastTitle = computed(() => state.currentPodcastTitle);
+    const podcastSubtitle = computed(() => state.currentPodcastSubtitle);
+    const coverSrc = computed(() => state.currentPodcastCover);
+
+    // 如果你要支持进度条，可以加:
+    // const currentTime = computed(() => state.currentTime);
+    // const duration = computed(() => state.duration);
+
+    // 2) 监听全局的 audioSrc 改变，重新创建 / 播放
+    watch(
+      () => state.currentAudioSrc,
+      (newSrc) => {
+        initAudio(newSrc);
+        if (newSrc) {
+          audio.value.play();
+          audioManager.setIsPlaying(true);
         }
+      },
+    );
+
+    // 2) watch isPlaying，用来决定是否播放 / 暂停
+    watch(isPlaying, (val) => {
+      if (!audio.value) return;
+      if (val) {
+        audio.value.play();
+      } else {
+        audio.value.pause();
+      }
+    });
+
+    watch(podcastTitle, async () => {
+      await nextTick();
+      checkTitleOverflow();
+    });
+
+    watch(podcastSubtitle, async () => {
+      await nextTick();
+      checkSubtitleOverflow();
+    });
+
+    // 组件挂载时，若已经有 src，则初始化
+    onMounted(async () => {
+      if (state.currentAudioSrc) {
+        initAudio(state.currentAudioSrc);
+        audioManager.setIsPlaying(true);
+      }
+
+      await nextTick();
+      checkTitleOverflow();
+      checkSubtitleOverflow();
+    });
+
+    // 组件卸载前，清理
+    onBeforeUnmount(() => {
+      cleanupAudio();
+    });
+
+    // ========== 音频核心逻辑 ==========
+    function initAudio(src) {
+      cleanupAudio();
+      if (!src) return;
+
+      audio.value = new Audio(src);
+      audio.value.addEventListener('timeupdate', handleTimeUpdate);
+      audio.value.addEventListener('ended', handleEnded);
+      audio.value.addEventListener('canplay', handleCanPlay);
     }
+
+    function cleanupAudio() {
+      if (!audio.value) return;
+      audio.value.removeEventListener('timeupdate', handleTimeUpdate);
+      audio.value.removeEventListener('ended', handleEnded);
+      audio.value.removeEventListener('canplay', handleCanPlay);
+      audio.value.pause();
+      audio.value = null;
+    }
+
+    // 播放 / 暂停
+    function togglePlayPause() {
+      if (!audio.value) return;
+      if (!state.isPlaying) {
+        audioManager.setIsPlaying(true);
+      } else {
+        audioManager.setIsPlaying(false);
+      }
+    }
+
+    // canplay
+    function handleCanPlay() {
+      audioManager.setDuration(audio.value.duration);
+    }
+
+    // timeupdate
+    function handleTimeUpdate() {
+      audioManager.setCurrentTime(audio.value.currentTime);
+    }
+
+    // ended
+    function handleEnded() {
+      audioManager.setIsPlaying(false);
+      // audioManager.setCurrentTime(0);
+    }
+
+    // ========== 动态进度条 ==========
+    const progressBarWidth = computed(() => {
+      return state.duration
+        ? `${(state.currentTime / state.duration) * 100}%`
+        : '0%';
+    });
+
+    // ========== 标题滚动/溢出检测 ==========
+    const titleRef = ref(null);
+    const subtitleRef = ref(null);
+    const isTitleOverflow = ref(false);
+    const isSubtitleOverflow = ref(false);
+
+    // 用于检测标题是否溢出
+    function checkTitleOverflow() {
+      // 若需要在podcastTitle改变后自动检测，可以 watch(podcastTitle, checkTitleOverflow)
+      // 这里只是个示例:
+      if (!titleRef.value) return;
+      const container = titleRef.value.parentElement; 
+      if (container) {
+        isTitleOverflow.value = (titleRef.value.scrollWidth > container.clientWidth);
+      }
+    }
+
+    // 用于检测副标题是否溢出
+    function checkSubtitleOverflow() {
+      if (!subtitleRef.value) return;
+      const container = subtitleRef.value.parentElement; 
+      if (container) {
+        isSubtitleOverflow.value = (subtitleRef.value.scrollWidth > container.clientWidth);
+      }
+    }
+
+    // ========== 封面旋转 ==========
+    const rotatingPosterClass = computed(() => {
+      return isPlaying.value ? 'poster-rotating' : '';
+    });
+
+    // 返回模板所需的属性/方法
+    return {
+      // 全局状态引用
+      state,
+
+      // 供模板使用的 computed
+      isPlaying,
+      podcastTitle,
+      podcastSubtitle,
+      coverSrc,
+
+      // 进度条
+      progressBarWidth,
+      rotatingPosterClass,
+
+      // 标题滚动检测
+      isTitleOverflow,
+      isSubtitleOverflow,
+      titleRef,
+      subtitleRef,
+      checkTitleOverflow,
+      checkSubtitleOverflow,
+
+      // 播放控制
+      togglePlayPause,
+    };
+  },
 };
 </script>
 

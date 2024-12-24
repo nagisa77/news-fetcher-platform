@@ -18,7 +18,17 @@
                 <div class="duration-overlay">
                   {{ formatDuration(podcast.total_duration) }}
                 </div>
-                <div class="overlay">
+                <div v-if="
+                  audioManager.state.isPlaying &&
+                  podcast.title === audioManager.state.currentPodcastTitle
+                " class="overlay">
+                  <svg class="play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+                    <circle cx="32" cy="32" r="32" fill="rgba(0, 0, 0, 0.5)" />
+                    <rect x="22" y="20" width="8" height="24" fill="#fff" />
+                    <rect x="34" y="20" width="8" height="24" fill="#fff" />
+                  </svg>
+                </div>
+                <div v-else class="overlay">
                   <svg class="play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
                     <circle cx="32" cy="32" r="32" fill="rgba(0, 0, 0, 0.5)" />
                     <polygon points="26,20 26,44 46,32" fill="#fff" />
@@ -33,8 +43,10 @@
                   </div>
                 </div>
                 <span class="content-card-date">
-                  <svg class="content-card-date-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12">
-                    <path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zm-7-9h5v5h-5V10z" />
+                  <svg class="content-card-date-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12"
+                    height="12">
+                    <path fill="currentColor"
+                      d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zm-7-9h5v5h-5V10z" />
                   </svg>
                   {{ podcast.date || '未知日期' }}
                 </span>
@@ -48,6 +60,8 @@
 </template>
 
 <script>
+import audioManager from '@/globalAudioManager.js';
+
 export default {
   name: 'HomePage',
 
@@ -55,6 +69,7 @@ export default {
     return {
       podcasts: [],
       loading: true,
+      audioManager, // <--- 1) 将 audioManager 直接挂到 data 上
     };
   },
 
@@ -66,9 +81,7 @@ export default {
     async fetchPodcasts() {
       this.loading = true;
       try {
-        const response = await fetch(
-          "https://getbloglist-a6lubplbza-uc.a.run.app"
-        );
+        const response = await fetch("https://getbloglist-a6lubplbza-uc.a.run.app");
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -101,8 +114,8 @@ export default {
       const secs = seconds % 60;
       return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     },
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
