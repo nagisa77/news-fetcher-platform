@@ -307,7 +307,7 @@ export default {
 
 /* 标题容器 */
 .desktop-title-container {
-  max-width: 170px;
+  max-width: 250px;
   overflow: hidden;
   white-space: nowrap;
   margin-left: 20px;
