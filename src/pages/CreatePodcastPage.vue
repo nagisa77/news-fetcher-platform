@@ -1,6 +1,6 @@
 <template>
   <div class="create-podcast-page">
-    <h3>Some Podcasts is Generating...</h3>
+    <h2 class="create-podcast-page-title">Some Podcasts is Generating...</h2>
     <div v-if="loading">Loading...</div>
     <div v-else class="actions-container">
       <div v-for="action in actions" :key="action.id" class="action-item">
@@ -26,7 +26,7 @@
           {{ formatDate(action.created_at) }}
         </span>
       </div>
-      <!-- ...... -->
+      ...... (only shows 10 actions)
     </div>
   </div>
 </template>
@@ -91,12 +91,12 @@ export default {
 </script>
 <style scoped>
 .create-podcast-page {
+  position: relative;
   display: flex;
   flex-direction: column;
   color: var(--color-deep-level-1-rose-taupe);
   background-color: var(--color-white);
   align-items: center;
-  justify-content: center;
   height: 100vh;
 }
 
@@ -113,6 +113,10 @@ export default {
   padding: 2px 5px;
   border-radius: 5px;
   font-weight: bold;
+}
+
+.create-podcast-page-title {
+  margin-top: 200px;
 }
 
 .action-item {
@@ -156,6 +160,10 @@ export default {
 
   .create-podcast-page {
     height: calc(100vh - 100px);
+  }
+
+  .create-podcast-page-title {
+    margin-top: 50px;
   }
 }
 

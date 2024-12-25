@@ -342,6 +342,10 @@ export default {
   .scroll-view {
     height: calc(100vh - 100px);
   }
+
+  .loading-icon {
+    top: calc(50% - 100px);
+  }
 }
 
 @media (min-width: 541px) and (max-width: 899px) {
