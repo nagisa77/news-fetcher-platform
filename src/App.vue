@@ -23,13 +23,8 @@
     </div>
 
     <!-- 修改为带 props 的 MobilePlayer -->
-    <MobilePlayer
-      :audioSrc="currentAudioSrc"
-      :coverSrc="currentPodcastCover"
-      :podcastTitle="currentPodcastTitle"
-      :podcastSubtitle="currentPodcastSubtitle"
-      ref="mobilePlayer"
-    />
+    <MobilePlayer v-if="isMobile"/>
+    <DesktopPlayer v-else />
   </div>
 </template>
 
@@ -37,21 +32,28 @@
 import HeaderContent from './components/HeaderContent.vue';
 import MobilePlayer from './components/MobilePlayer.vue';
 import audioManager from './globalAudioManager';
+import DesktopPlayer from './components/DesktopPlayer.vue';
 
 export default {
   components: {
     HeaderContent,
-    MobilePlayer
+    MobilePlayer,
+    DesktopPlayer
   },
   data() {
     return {
       isMobileMenuOpen: false,
+      isMobile: window.innerWidth <= 649, // 初始化为当前窗口宽度是否为移动端
     };
   },
   mounted() {
     audioManager.setPodcastCover('https://storage.googleapis.com/news-fetcher-platform.firebasestorage.app/podcasts_image/df_image.png?GoogleAccessId=firebase-adminsdk-i0di3%40news-fetcher-platform.iam.gserviceaccount.com&Expires=16447017600&Signature=g3ny1EQ2mliNum08Zk8sP7WL3sE2k9uQFbq9CbJePyqnYIAbexJcZPRG6BPfga7beRk0naYdWKKnZM1RDzGcJEq7xmkxVTNx09pNoD6kN3PYiawt3DvYANWnDCC5HqRad%2B%2BPbwEX5YjTlr9iBGIkk9TJ39%2F6c2VypXaztZDMMdoGZoeC4792Sqc6Bwd%2F7zyi%2FztUUj3%2BHGjroXd1w3c%2BkCEaVMzFN7IXpMMBYClTEv5lYXNLc6NL%2BUNFrFQWUQxrKS3mC1nhsOjwAQbwNCoa7K%2BnvScwdP20iFbVp0Q7hvstB1n9FctEvow0EwuStyn2UPTa8nfMCsKWvV5wAlfRzQ%3D%3D');
     audioManager.setPodcastTitle('-');
     audioManager.setPodcastSubtitle('-');
+    window.addEventListener('resize', this.handleResize);
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.handleResize);
   },
   methods: {
     handleRouteClicked(routeName) {
@@ -75,6 +77,9 @@ export default {
 
       // 假如播放时希望立刻切换为 isPlaying = true，可以手动设置
       audioManager.setIsPlaying(true);
+    },
+    handleResize() {
+      this.isMobile = window.innerWidth <= 649;
     },
   }
 }
