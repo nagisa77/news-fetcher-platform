@@ -69,8 +69,6 @@
         </div>
       </div>
     </div>
-
-    <div class="desktop-player-controls-right"></div>
   </div>
 </template>
 
@@ -319,14 +317,14 @@ export default {
   display: inline-block;
   font-size: 14px;
   font-weight: bold;
-  color: var(--color-deep-level-4-persian-pink);
+  color: var(--color-deep-level-1-rose-taupe);
 }
 
 .desktop-player-subtitle {
   font-size: 12px;
   padding-top: 4px;
   opacity: 0.8;
-  color: var(--color-deep-level-4-persian-pink);
+  color: var(--color-deep-level-1-rose-taupe);
 }
 
 /* 右侧：按钮 + 进度条 */
@@ -360,7 +358,7 @@ export default {
 
 /* 播放/暂停按钮高亮 */
 .play-pause-button {
-  background-color: var(--color-deep-level-4-persian-pink);
+  background-color: var(--color-deep-level-1-rose-taupe);
   color: var(--color-white);
 }
 
@@ -368,7 +366,7 @@ export default {
   opacity: 0.8;
   scale: 1.1;
   transition: all 0.3s ease;
-  background-color: var(--color-deep-level-4-persian-pink);
+  background-color: var(--color-deep-level-1-rose-taupe);
 }
 
 /* SVG 图标 */
@@ -377,7 +375,7 @@ export default {
   top: 2px;
   width: 24px;
   height: 24px;
-  fill: var(--color-deep-level-4-persian-pink);
+  fill: var(--color-deep-level-1-rose-taupe);
 }
 
 .play-icon,
@@ -413,7 +411,7 @@ export default {
   top: 0;
   left: 0;
   height: 4px;
-  background-color: var(--color-deep-level-4-persian-pink);
+  background-color: var(--color-deep-level-1-rose-taupe);
   border-radius: 2px;
   transition: width 0.1s linear;
 }
@@ -425,7 +423,7 @@ export default {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background-color: var(--color-deep-level-4-persian-pink);
+  background-color: var(--color-deep-level-1-rose-taupe);
   transform: translateX(-50%);
   transition: left 0.1s linear;
   cursor: pointer;
@@ -434,7 +432,7 @@ export default {
 /* 时间显示 */
 .time-display {
   font-size: 12px;
-  color: var(--color-deep-level-4-persian-pink);
+  color: var(--color-deep-level-1-rose-taupe);
   user-select: none;
   min-width: 70px;
   text-align: center;
