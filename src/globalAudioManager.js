@@ -15,7 +15,7 @@ const state = reactive({
 
 // 初始化音频
 function initAudio(src) {
-  cleanupAudio(); 
+  cleanupAudio();
   if (!src) return;
   audio = new Audio(src);
   audio.addEventListener('timeupdate', handleTimeUpdate);
@@ -75,6 +75,9 @@ export default {
     state.isPlaying = value;
   },
   setCurrentTime(value) {
+    if (audio) {
+      audio.currentTime = value;
+    }
     state.currentTime = value;
   },
   setDuration(value) {
