@@ -1,14 +1,15 @@
 <template>
   <div class="site-container">
-    <div class="overlay"></div> 
+    <div class="overlay"></div>
     <header class="site-header-desktop">
-      <HeaderContent ref="header-content-desktop" :showTitle="true" @route-clicked="handleRouteClicked"/>
+      <HeaderContent ref="header-content-desktop" :showTitle="true" @route-clicked="handleRouteClicked" />
     </header>
 
     <header class="site-header-mobile">
       <h1 class="mobile-header-title">Podcasts</h1>
       <button @click="toggleMobileMenu" style="background: none; border: none; padding: 0; cursor: pointer;">
-        <svg class="mobile-header-menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+        <svg class="mobile-header-menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24"
+          height="24">
           <path fill="currentColor" d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" />
         </svg>
       </button>
@@ -23,8 +24,10 @@
     </div>
 
     <!-- 修改为带 props 的 MobilePlayer -->
-    <MobilePlayer v-if="isMobile"/>
-    <DesktopPlayer v-else />
+    <MobilePlayer v-if="isMobile" />
+    <DesktopPlayer v-else @cover-click="onCoverClick" />
+
+    <DesktopDetail v-if="!isMobile && showDesktopDetail" :podcast="currentPodcast" />
   </div>
 </template>
 
@@ -33,17 +36,21 @@ import HeaderContent from './components/HeaderContent.vue';
 import MobilePlayer from './components/MobilePlayer.vue';
 import audioManager from './globalAudioManager';
 import DesktopPlayer from './components/DesktopPlayer.vue';
+import DesktopDetail from './components/DesktopDetail.vue';
 
 export default {
   components: {
     HeaderContent,
     MobilePlayer,
-    DesktopPlayer
+    DesktopPlayer,
+    DesktopDetail
   },
   data() {
     return {
       isMobileMenuOpen: false,
       isMobile: window.innerWidth <= 649, // 初始化为当前窗口宽度是否为移动端
+      currentPodcast: {},
+      showDesktopDetail: true,
     };
   },
   mounted() {
@@ -77,6 +84,12 @@ export default {
 
       // 假如播放时希望立刻切换为 isPlaying = true，可以手动设置
       audioManager.setIsPlaying(true);
+
+      this.currentPodcast = podcast;
+    },
+    onCoverClick() {
+      // Toggle the visibility of DesktopDetail
+      this.showDesktopDetail = !this.showDesktopDetail;
     },
     handleResize() {
       this.isMobile = window.innerWidth <= 649;
@@ -98,10 +111,10 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: var(--color-deep-level-3-sky-magenta); 
-  z-index: 10000000; 
+  background-color: var(--color-deep-level-3-sky-magenta);
+  z-index: 10000000;
   opacity: 0.15;
-  pointer-events: none; 
+  pointer-events: none;
 }
 
 .header-menu-icon {
@@ -110,15 +123,15 @@ export default {
 }
 
 .site-content {
+  flex: 1;
   height: 100vh;
-  width: calc(100vw - 300px);
   background-color: var(--content-background-color);
   transition: margin-left 0.3s ease;
 }
 
 .site-header-desktop {
   height: calc(100vh - 200px);
-  width: 300px;
+  width: 200px;
   padding: 100px 60px;
   background-color: var(--color-white);
   transition: width 0.3s ease;
@@ -171,12 +184,12 @@ export default {
 @media (min-width: 650px) and (max-width: 1099px) {
   .site-header-desktop {
     height: calc(100vh - 200px);
-    width: 200px;
-    padding: 100px 20px; 
+    width: 150px;
+    padding: 100px 20px;
   }
 
   .site-content {
-    width: calc(100% - 200px);
+    flex: 1;
   }
 }
 
@@ -193,13 +206,13 @@ export default {
   }
 
   .site-content {
-    width: 100%;
+    flex: 1;
     height: calc(100vh - 100px);
     padding-top: 100px;
   }
 
   .site-content.collapsed {
-    width: 100%;
+    flex: 1;
   }
 }
 </style>

@@ -3,7 +3,7 @@
     <!-- 左侧：封面 + 标题 -->
     <div class="desktop-poaster-and-title">
       <div class="desktop-poaster-container">
-        <img class="desktop-poster-image" :src="coverSrc" alt="Podcast Poster" />
+        <img class="desktop-poster-image" :src="coverSrc" alt="Podcast Poster" @click="$emit('cover-clicked')" />
       </div>
       <div class="desktop-title-container">
         <div class="desktop-player-title" ref="titleRef">

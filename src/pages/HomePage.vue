@@ -1,5 +1,5 @@
 <template>
-  <div class="scroll-view-container">
+  <div class="scroll-view-container" ref="scrollViewContainer">
     <div class="scroll-view">
       <div class="multi-column-layout">
         <div class="content-container">
@@ -8,14 +8,14 @@
             Loading...
           </div>
           <!-- 文章内容 -->
-          <div v-else class="masonry">
+          <div :class="['masonry', currentLayout]">
             <div
               v-for="(podcast, index) in podcasts"
               :key="index"
               class="masonry-item"
               @click="$emit('play-request', podcast)"
             >
-              <!-- 利用 aspect-ratio 避免图片没加载前容器塌陷 -->
+              <!-- 组件内容 -->
               <div class="image-container">
                 <img
                   v-if="podcast.img_url && podcast.img_url.trim() !== ''"
@@ -223,10 +223,7 @@ export default {
   color: var(--color-deep-level-2-rose-taupe);
 }
 
-/* 
-  1) 为了防止容器在图片未加载前塌陷，使用 aspect-ratio
-     如果要兼容老浏览器，可用 padding 技巧替换 
-*/
+
 .image-container {
   position: relative;
   width: 100%;
