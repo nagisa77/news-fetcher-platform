@@ -3,7 +3,16 @@
     <!-- 左侧：封面 + 标题 -->
     <div class="desktop-poaster-and-title">
       <div class="desktop-poaster-container">
-        <img class="desktop-poster-image" :src="coverSrc" alt="Podcast Poster" @click="$emit('cover-clicked')" />
+        <div class="poster-wrapper">
+          <img class="desktop-poster-image" :src="coverSrc" alt="Podcast Poster" @click="$emit('cover-clicked')" />
+          <div class="overlay" @click="$emit('cover-clicked')">
+            <!-- Detail Icon -->
+            <svg class="detail-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <!-- 新的详情图标路径 -->
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+            </svg>
+          </div>
+        </div>
       </div>
       <div class="desktop-title-container">
         <div class="desktop-player-title" ref="titleRef">
@@ -282,6 +291,8 @@ export default {
   /* 背景模糊，可根据需求调整 */
   backdrop-filter: blur(50px);
   -webkit-backdrop-filter: blur(50px);
+  /* 添加内阴影 */
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 /* 左侧：封面 + 标题 */
@@ -437,4 +448,54 @@ export default {
   min-width: 70px;
   text-align: center;
 }
+
+/* 封面包裹器，用于定位蒙层和图标 */
+.poster-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* 蒙层 */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明黑色 */
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  cursor: pointer; /* 鼠标样式改变 */
+}
+
+/* Hover 时显示蒙层 */
+.poster-wrapper:hover .overlay {
+  opacity: 1;
+}
+
+/* 详情图标样式 */
+.detail-icon {
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  width: 24px;
+  height: 24px;
+  fill: white; /* 图标颜色 */
+}
+
+/* 修改封面图像的鼠标样式 */
+.desktop-poster-container {
+  cursor: pointer; /* 鼠标样式改变 */
+}
+
+/* 可选：如果需要封面图像在 hover 时有变化，可以添加 */
+.poster-wrapper:hover .desktop-poster-image {
+  /* 例如，轻微缩放 */
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
 </style>

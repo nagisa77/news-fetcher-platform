@@ -25,7 +25,7 @@
 
     <!-- 修改为带 props 的 MobilePlayer -->
     <MobilePlayer v-if="isMobile" />
-    <DesktopPlayer v-else @cover-click="onCoverClick" />
+    <DesktopPlayer v-else @cover-clicked="onCoverClick" />
 
     <DesktopDetail v-if="!isMobile && showDesktopDetail" :podcast="currentPodcast" />
   </div>
@@ -50,7 +50,7 @@ export default {
       isMobileMenuOpen: false,
       isMobile: window.innerWidth <= 649, // 初始化为当前窗口宽度是否为移动端
       currentPodcast: {},
-      showDesktopDetail: true,
+      showDesktopDetail: false,
     };
   },
   mounted() {
@@ -88,7 +88,9 @@ export default {
       this.currentPodcast = podcast;
     },
     onCoverClick() {
-      // Toggle the visibility of DesktopDetail
+      if (Object.keys(this.currentPodcast).length === 0) {
+        return;
+      }
       this.showDesktopDetail = !this.showDesktopDetail;
     },
     handleResize() {
