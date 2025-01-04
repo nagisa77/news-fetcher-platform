@@ -86,6 +86,12 @@ export default {
       audioManager.setIsPlaying(true);
 
       this.currentPodcast = podcast;
+
+      if (Object.keys(this.currentPodcast).length === 0) {
+        return;
+      }
+
+      this.showDesktopDetail = true;
     },
     onCoverClick() {
       if (Object.keys(this.currentPodcast).length === 0) {
