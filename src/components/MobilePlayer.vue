@@ -158,17 +158,17 @@ export default {
   position: fixed;
   bottom: 0;
   left: 50%;
-  height: 60px;
+  height: 70px;
   transform: translate(-50%, -10px);
   padding: 0;
   z-index: 1000;
-  width: 80%;
+  width: 95%;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-radius: 30px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   /* 让内容不被背景模糊色覆盖 */
   overflow: hidden;
 }
@@ -179,7 +179,7 @@ export default {
   height: 100%;
   width: 100%;
   background-color: var(--color-deep-level-1-rose-taupe);
-  border-radius: 30px;
+  border-radius: 10px;
   opacity: var(--bottom-audio-opacity);
   z-index: 0;
 }
@@ -188,7 +188,7 @@ export default {
 .bottom-audio-progress-bar {
   position: absolute;
   bottom: 0;
-  left: 30px;
+  left: 10px;
   height: 2px;
   background-color: var(--color-deep-level-3-sky-magenta);
   z-index: 2;
@@ -214,7 +214,7 @@ export default {
 
 /* 播放时封面旋转动画 */
 .poster-rotating {
-  animation: rotatingPoster 3s linear infinite;
+  animation: rotatingPoster 10s linear infinite;
 }
 
 @keyframes rotatingPoster {
@@ -235,7 +235,7 @@ export default {
 }
 
 .mobile-player-title-container {
-  max-width: 170px;
+  max-width: 250px;
   overflow: hidden;
   white-space: nowrap;
   margin-left: 10px;
