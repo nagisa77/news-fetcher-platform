@@ -119,7 +119,7 @@ export default {
         const fetchedPodcasts = await response.json();
         console.log(fetchedPodcasts);
         // 解析格式并按倒序排列
-        this.podcasts = fetchedPodcasts.reverse().map((podcast) => ({
+        const parsed = fetchedPodcasts.reverse().map((podcast) => ({
           title: podcast.title,
           img_url: podcast.img_url,
           description: podcast.description,
@@ -129,6 +129,8 @@ export default {
           total_duration: podcast.total_duration, // 确保包含 total_duration
           displayName: podcast.title.replace(/\.mp3$/i, ""),
         }));
+        const columnCount = this.getColumnCount();
+        this.podcasts = this.reorderForColumns(parsed, columnCount);
       } catch (error) {
         console.error("Failed to fetch podcast list:", error);
       } finally {
@@ -148,8 +150,39 @@ export default {
     /**
      * 当图片加载完成时，设置对应标记，触发淡入
      */
-     onImageLoad(index) {
+      onImageLoad(index) {
       this.imageLoadedMap[index] = true;
+    },
+
+    /**
+     * 获取当前页面的列数
+     * @returns {number}
+     */
+    getColumnCount() {
+      const masonryEl = this.$el.querySelector('.masonry');
+      if (!masonryEl) return 1;
+      const style = window.getComputedStyle(masonryEl);
+      const count = parseInt(style.columnCount, 10);
+      return isNaN(count) ? 1 : count;
+    },
+
+    /**
+     * 根据列数重新排序数组，使其以行顺序显示
+     * @param {Array} items
+     * @param {number} columnCount
+     * @returns {Array}
+     */
+    reorderForColumns(items, columnCount) {
+      if (columnCount <= 1) return items;
+      const result = [];
+      const rows = Math.ceil(items.length / columnCount);
+      for (let col = 0; col < columnCount; col++) {
+        for (let row = 0; row < rows; row++) {
+          const idx = row * columnCount + col;
+          if (idx < items.length) result.push(items[idx]);
+        }
+      }
+      return result;
     },
   },
 };
