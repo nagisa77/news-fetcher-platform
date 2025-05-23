@@ -1,10 +1,14 @@
 :root {
-  --color-deep-level-1-rose-taupe: #7C606B;
-  --color-deep-level-2-rose-taupe: #C46BAE;
-  --color-deep-level-3-sky-magenta: #EB7BC0;
-  --color-deep-level-4-persian-pink: #EDA4BD;
-  --color-deep-level-5-amaranth-pink: #EED5C2;
-  --color-deep-level-6-champagne-pink: #FADADD;
+  --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --global-background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+  --color-deep-level-1-rose-taupe: #5a67d8;
+  --color-deep-level-2-rose-taupe: #7f9cf5;
+  --color-deep-level-3-sky-magenta: #a3bffa;
+  --color-deep-level-4-persian-pink: #c3dafe;
+  --color-deep-level-5-amaranth-pink: #e9d8fd;
+  --color-deep-level-6-champagne-pink: #f7fafc;
   --color-white: #FFFFFF;
 
   --bottom-audio-opacity: 0.8;
@@ -12,22 +16,24 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-deep-level-1-rose-taupe: #C46BAE;
-    --color-deep-level-2-rose-taupe: #EB7BC0;
-    --color-deep-level-3-sky-magenta: #EDA4BD;
-    --color-deep-level-4-persian-pink: #EED5C2;
-    --color-deep-level-5-amaranth-pink: #EED5C2;
-    --color-deep-level-6-champagne-pink: #7C606B;
-    --color-white: #2c2125;
+    --color-deep-level-1-rose-taupe: #a3bffa;
+    --color-deep-level-2-rose-taupe: #c3dafe;
+    --color-deep-level-3-sky-magenta: #d6bcfa;
+    --color-deep-level-4-persian-pink: #b794f4;
+    --color-deep-level-5-amaranth-pink: #805ad5;
+    --color-deep-level-6-champagne-pink: #322659;
+    --color-white: #1a202c;
 
-    --bottom-audio-opacity: 0.3; 
+    --bottom-audio-opacity: 0.3;
   }
 }
 
-html, body {
-  font-family: 'Merriweather', serif;
+html,
+body {
+  font-family: var(--font-family-base);
   height: 100%;
   margin: 0;
   padding: 0;
+  background: var(--global-background);
   overflow: hidden; /* 禁止外层滚动 */
 }

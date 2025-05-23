@@ -162,8 +162,8 @@ export default {
   transform: translate(-50%, -10px);
   padding: 0;
   z-index: 1000;
-  width: 95%;
-  border-radius: 10px;
+  width: 100%;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -171,6 +171,7 @@ export default {
   -webkit-backdrop-filter: blur(20px);
   /* 让内容不被背景模糊色覆盖 */
   overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* 底色容器 */
@@ -178,8 +179,8 @@ export default {
   position: absolute;
   height: 100%;
   width: 100%;
-  background-color: var(--color-deep-level-1-rose-taupe);
-  border-radius: 10px;
+  background: var(--global-background);
+  border-radius: 12px;
   opacity: var(--bottom-audio-opacity);
   z-index: 0;
 }
@@ -189,7 +190,7 @@ export default {
   position: absolute;
   bottom: 0;
   left: 10px;
-  height: 2px;
+  height: 3px;
   background-color: var(--color-deep-level-3-sky-magenta);
   z-index: 2;
   transition: width 0.2s linear;
@@ -243,14 +244,14 @@ export default {
 
 .mobile-player-title {
   display: inline-block;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: bold;
   color: var(--color-deep-level-4-persian-pink);
 }
 
 /* 副标题 */
 .mobile-player-subtitle {
-  font-size: 10px;
+  font-size: 11px;
   padding-top: 4px;
   opacity: 0.8;
   color: var(--color-deep-level-4-persian-pink);
@@ -275,8 +276,8 @@ export default {
 
 /* 播放 / 暂停图标样式 */
 .icon {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   fill: var(--color-deep-level-4-persian-pink);
 }
 
@@ -289,5 +290,6 @@ export default {
   transition: background-color 0.3s;
   margin-right: 5px;
   top: 2px;
+  padding: 6px;
 }
 </style>
