@@ -148,7 +148,7 @@ export default {
 
 .site-header-mobile {
   height: 100px;
-  background-color: var(--color-white);
+  background: var(--global-background);
   width: 100%;
   display: none;
   position: fixed;
@@ -165,11 +165,13 @@ export default {
   top: 100px;
   height: 0;
   padding: 0 20px;
-  background-color: var(--color-white);
+  background: var(--global-background);
   position: absolute;
   z-index: 1000;
   overflow: hidden;
   transition: height 0.3s ease-out, padding 0.3s ease-out;
+  border-radius: 0 0 20px 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .header-content-mobile.menu-visible {
@@ -179,7 +181,7 @@ export default {
 
 .mobile-header-title {
   margin-left: 20px;
-  font-size: 24px;
+  font-size: 26px;
   font-weight: bold;
   color: var(--color-deep-level-1-rose-taupe);
 }
@@ -187,6 +189,8 @@ export default {
 .mobile-header-menu-icon {
   margin-right: 20px;
   color: var(--color-deep-level-1-rose-taupe);
+  width: 28px;
+  height: 28px;
 }
 
 @media (min-width: 650px) and (max-width: 1099px) {
