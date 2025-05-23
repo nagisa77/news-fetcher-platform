@@ -44,7 +44,6 @@ export default {
 .header-content {
     padding-top: 10px;
     color: var(--color-deep-level-1-rose-taupe);
-    background-color: var(--color-white);
 }
 
 .header-route {
