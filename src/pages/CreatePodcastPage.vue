@@ -26,7 +26,7 @@
           {{ formatDate(action.created_at) }}
         </span>
       </div>
-      ...... (only shows 10 actions)
+      <span class="actions-count">...... (only shows 10 actions)</span>
     </div>
   </div>
 </template>
@@ -138,6 +138,12 @@ export default {
 }
 
 .action-created-at {
+  margin-left: 10px;
+  opacity: 0.5;
+  font-size: 10px;
+}
+
+.actions-count {
   margin-left: 10px;
   opacity: 0.5;
   font-size: 10px;
