@@ -1,6 +1,6 @@
 <template>
   <div class="scroll-view-container" ref="scrollViewContainer">
-    <div class="scroll-view">
+    <div class="scroll-view" @scroll="handleScroll">
       <div class="multi-column-layout">
         <div class="content-container">
           <!-- 加载中提示 -->
@@ -82,6 +82,7 @@
               </div>
             </div>
           </div>
+          <div v-if="loadingMore" class="bottom-loading-icon">Loading...</div>
         </div>
       </div>
     </div>
@@ -98,6 +99,10 @@ export default {
     return {
       podcasts: [],
       loading: true,
+      loadingMore: false,
+      page: 1,
+      pageSize: 20,
+      noMoreData: false,
       audioManager, // 保持 audioManager
       // 新增：用于记录每张图片是否加载完成
       imageLoadedMap: {},
@@ -110,31 +115,49 @@ export default {
 
   methods: {
     async fetchPodcasts() {
-      this.loading = true;
+      if (this.loadingMore || this.noMoreData) return;
+      if (this.page === 1) {
+        this.loading = true;
+      }
+      this.loadingMore = true;
       try {
-        const response = await fetch("https://getbloglist-a6lubplbza-uc.a.run.app");
+        const response = await fetch(
+          `https://getbloglist-a6lubplbza-uc.a.run.app?page=${this.page}&pageSize=${this.pageSize}`
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const fetchedPodcasts = await response.json();
-        console.log(fetchedPodcasts);
-        // 解析格式并按倒序排列
-        const parsed = fetchedPodcasts.reverse().map((podcast) => ({
+        const parsed = fetchedPodcasts.map((podcast) => ({
           title: podcast.title,
           img_url: podcast.img_url,
           description: podcast.description,
           filename: podcast.filename,
           date: podcast.date,
           tags: podcast.tags,
-          total_duration: podcast.total_duration, // 确保包含 total_duration
+          total_duration: podcast.total_duration,
           displayName: podcast.title.replace(/\.mp3$/i, ""),
         }));
         const columnCount = this.getColumnCount();
-        this.podcasts = this.reorderForColumns(parsed, columnCount);
+        const combined = this.podcasts.concat(parsed);
+        this.podcasts = this.reorderForColumns(combined, columnCount);
+        if (fetchedPodcasts.length < this.pageSize) {
+          this.noMoreData = true;
+        } else {
+          this.page += 1;
+        }
       } catch (error) {
         console.error("Failed to fetch podcast list:", error);
       } finally {
         this.loading = false;
+        this.loadingMore = false;
+      }
+    },
+
+    handleScroll(event) {
+      const target = event.target;
+      if (target.scrollTop + target.clientHeight >= target.scrollHeight - 10) {
+        this.fetchPodcasts();
       }
     },
     /**
@@ -253,6 +276,12 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  color: var(--color-deep-level-2-rose-taupe);
+}
+
+.bottom-loading-icon {
+  text-align: center;
+  padding: 20px 0;
   color: var(--color-deep-level-2-rose-taupe);
 }
 
