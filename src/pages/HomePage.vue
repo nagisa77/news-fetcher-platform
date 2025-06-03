@@ -101,7 +101,7 @@ export default {
       loading: true,
       loadingMore: false,
       page: 1,
-      pageSize: 20,
+      pageSize: 14,
       noMoreData: false,
       audioManager, // 保持 audioManager
       // 新增：用于记录每张图片是否加载完成
@@ -118,8 +118,10 @@ export default {
       if (this.loadingMore || this.noMoreData) return;
       if (this.page === 1) {
         this.loading = true;
+        this.loadingMore = false;
+      } else {
+        this.loadingMore = true;
       }
-      this.loadingMore = true;
       try {
         const response = await fetch(
           `https://getbloglist-a6lubplbza-uc.a.run.app?page=${this.page}&pageSize=${this.pageSize}`
